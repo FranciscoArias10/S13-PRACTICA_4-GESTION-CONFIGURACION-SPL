@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Núcleo | {{ ACTIVE_VARIANT }} — UNEMI SPL{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Panel Central de Proyectos Académicos</h1>
+        <p>{{ ACTIVE_CONFIG.DESCRIPTION }}</p>
+    </div>
+    <div class="btn-group">
+        {% if ENABLE_REPORTS %}
+            <a href="{% url 'reports:export_pdf' %}" class="btn btn-emerald">Exportar Reporte PDF</a>
+            <a href="{% url 'reports:export_csv' %}" class="btn btn-outline">Exportar CSV</a>
+            <a href="{% url 'reports:dashboard' %}" class="btn btn-primary">Ver Panel de Reportes</a>
+        {% endif %}
+        <a href="{% url 'core:architecture' %}" class="btn btn-outline">Matriz SPL</a>
+    </div>
+</div>
+
+{% if ENABLE_REPORTS %}
+<div class="spl-banner-optional">
+    <div>
+        <strong>Módulo Opcional de Reportes Activo (<code>ENABLE_REPORTS = True</code>):</strong>
+        Las funciones de exportación ejecutiva (PDF con ReportLab y CSV) y analítica están habilitadas para esta variante.
+    </div>
+    <div class="btn-group">
+        <a href="{% url 'reports:export_pdf' %}" class="btn btn-emerald">Descargar PDF</a>
+        <a href="{% url 'reports:dashboard' %}" class="btn btn-primary">Abrir Reportes</a>
+    </div>
+</div>
+{% else %}
+<div class="spl-banner-disabled">
+    <strong>Modo Variante Básica (<code>ENABLE_REPORTS = False</code>):</strong>
+    El módulo opcional de reportes permanece aislado y desactivado. Las rutas <code>/reports/</code> no están expuestas en <code>urls.py</code>.
+</div>
+{% endif %}
+
+<section class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-label">Proyectos en Núcleo</div>
+        <div class="metric-value">{{ total_projects }}</div>
+        <div class="metric-sub">App núcleo: <code>core</code></div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Avance Promedio</div>
+        <div class="metric-value">{{ avg_progress }}%</div>
+        <div class="metric-sub">{{ completed_projects }} completado(s)</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Usuarios Registrados</div>
+        <div class="metric-value">{{ total_users }}</div>
+        <div class="metric-sub">App reutilizable: <code>accounts</code></div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Documentos Técnicos</div>
+        <div class="metric-value">{{ total_files }}</div>
+        <div class="metric-sub">App reutilizable: <code>file_manager</code></div>
+    </div>
+</section>
+
+<div class="layout-grid">
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Cartera de Proyectos ({{ projects|length }})</h2>
+                <form method="get" style="display:flex; gap:8px; align-items:center;">
+                    <select name="status" class="form-control" style="width:auto;">
+                        <option value="">Todos los estados</option>
+                        {% for key, label in status_choices %}
+                            <option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-outline">Filtrar</button>
+                </form>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Proyecto</th>
+                        <th>Categoría</th>
+                        <th>Responsable</th>
+                        <th>Estado</th>
+                        <th>Avance</th>
+                        <th>Presupuesto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td><strong>{{ project.code }}</strong></td>
+                        <td>
+                            <strong>{{ project.title }}</strong><br>
+                            <small style="color:#64748B;">Entrega: {{ project.delivery_date }}</small>
+                        </td>
+                        <td><span class="badge badge-core">{{ project.get_category_display }}</span></td>
+                        <td>{{ project.leader }}</td>
+                        <td>{{ project.get_status_display }}</td>
+                        <td style="min-width:110px;">
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: {{ project.progress }}%;"></div>
+                            </div>
+                            <small>{{ project.progress }}%</small>
+                        </td>
+                        <td>${{ project.budget_usd }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">No hay proyectos registrados con el filtro seleccionado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if ENABLE_NOTIFICATIONS %}
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Alertas Recientes del Sistema (<code>ENABLE_NOTIFICATIONS = True</code>)</h2>
+                <a href="{% url 'notifications:center' %}" class="btn btn-accent">Ir al Centro de Notificaciones</a>
+            </div>
+            {% for item in recent_notifications %}
+            <div class="notif-item {% if not item.is_read %}unread{% endif %}">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <strong>{{ item.title }}</strong>
+                    <span class="badge {% if item.level == 'WARNING' %}badge-variant-b{% elif item.level == 'SUCCESS' %}badge-on{% else %}badge-variant-a{% endif %}">
+                        {{ item.get_level_display }}
+                    </span>
+                </div>
+                <p style="font-size:13px; color:#475569;">{{ item.message }}</p>
+            </div>
+            {% empty %}
+            <p style="color:#64748B;">No hay alertas registradas en este momento.</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Registrar Nuevo Proyecto</h2>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="code">Código</label>
+                    <input id="code" name="code" class="form-control" placeholder="Ej. SPL-2026-07" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Título del Proyecto</label>
+                    <input id="title" name="title" class="form-control" placeholder="Ej. Plataforma Modular Académica" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Categoría</label>
+                    <select id="category" name="category" class="form-control">
+                        {% for key, label in category_choices %}
+                            <option value="{{ key }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="leader">Responsable</label>
+                    <input id="leader" name="leader" class="form-control" placeholder="Nombre del estudiante o líder" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Estado</label>
+                    <select id="status" name="status" class="form-control">
+                        {% for key, label in status_choices %}
+                            <option value="{{ key }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="progress">Avance (%)</label>
+                    <input id="progress" name="progress" type="number" min="0" max="100" value="40" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="budget_usd">Presupuesto (USD)</label>
+                    <input id="budget_usd" name="budget_usd" type="number" step="0.01" value="1450.00" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="delivery_date">Fecha de Entrega</label>
+                    <input id="delivery_date" name="delivery_date" type="date" value="2026-12-15" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Guardar Proyecto</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Estado de Variabilidad SPL</h2>
+            </div>
+            <p style="font-size:13px; color:#475569; margin-bottom:10px;">
+                Este sistema aplica el archivo <code>config_product.py</code> y banderas en <code>settings.py</code> para derivar productos sin duplicar el código fuente.
+            </p>
+            <ul style="font-size:13px; padding-left:18px; color:#334155;">
+                <li><strong>Variante activa:</strong> {{ ACTIVE_VARIANT }}</li>
+                <li><strong>Núcleo obligatorio:</strong> <code>core</code></li>
+                <li><strong>Apps reutilizables:</strong> <code>accounts</code>, <code>file_manager</code></li>
+                <li><strong>Reportes (<code>ENABLE_REPORTS</code>):</strong> {{ ENABLE_REPORTS }}</li>
+                <li><strong>Notificaciones (<code>ENABLE_NOTIFICATIONS</code>):</strong> {{ ENABLE_NOTIFICATIONS }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

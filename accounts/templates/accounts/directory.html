@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios (App Reutilizable) | UNEMI SPL{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Módulo Reutilizable: Gestión de Usuarios (<code>accounts</code>)</h1>
+        <p>App Django portátil diseñada sin acoplamiento al dominio para reutilizarse entre proyectos.</p>
+    </div>
+    <span class="badge badge-reusable">Core Asset Reutilizable</span>
+</div>
+
+<div class="layout-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Directorio de Integrantes y Perfiles ({{ profiles|length }})</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Institucional</th>
+                    <th>Usuario</th>
+                    <th>Nombre Completo</th>
+                    <th>Rol</th>
+                    <th>Departamento</th>
+                    <th>Correo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                <tr>
+                    <td><strong>{{ profile.institutional_id|default:"UNEMI-000" }}</strong></td>
+                    <td><code>{{ profile.user.username }}</code></td>
+                    <td>{{ profile.user.get_full_name|default:profile.user.username }}</td>
+                    <td><span class="badge badge-core">{{ profile.get_role_display }}</span></td>
+                    <td>{{ profile.department }}</td>
+                    <td>{{ profile.user.email }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No existen usuarios registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Agregar Perfil Reutilizable</h2>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input id="username" name="username" class="form-control" placeholder="ej. mgarcia" required>
+            </div>
+            <div class="form-group">
+                <label for="first_name">Nombres</label>
+                <input id="first_name" name="first_name" class="form-control" placeholder="Nombres" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Apellidos</label>
+                <input id="last_name" name="last_name" class="form-control" placeholder="Apellidos">
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Institucional</label>
+                <input id="email" name="email" type="email" class="form-control" placeholder="usuario@unemi.edu.ec">
+            </div>
+            <div class="form-group">
+                <label for="role">Rol</label>
+                <select id="role" name="role" class="form-control">
+                    {% for key, label in role_choices %}
+                        <option value="{{ key }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="department">Facultad / Carrera</label>
+                <input id="department" name="department" class="form-control" value="Ingeniería de Software — UNEMI">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Registrar Usuario</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

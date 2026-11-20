@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Arquitectura SPL | {{ ACTIVE_VARIANT }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Matriz de Arquitectura — Línea de Productos de Software (SPL)</h1>
+        <p>Clasificación en tiempo real de componentes reutilizables, núcleo y funcionalidades opcionales.</p>
+    </div>
+    <a href="{% url 'core:dashboard' %}" class="btn btn-primary">Volver al Panel</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Módulos y Banderas de Configuración ({{ ACTIVE_VARIANT }})</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>App Django</th>
+                <th>Clasificación SPL</th>
+                <th>Portabilidad</th>
+                <th>Control / Bandera</th>
+                <th>Estado Actual</th>
+                <th>Responsabilidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mod in module_matrix %}
+            <tr>
+                <td><code>{{ mod.app }}/</code></td>
+                <td><strong>{{ mod.tipo }}</strong></td>
+                <td>{{ mod.reutilizable }}</td>
+                <td><code>{{ mod.flag }}</code></td>
+                <td>
+                    {% if mod.activo %}
+                        <span class="badge badge-on">ACTIVO</span>
+                    {% else %}
+                        <span class="badge badge-off">DESACTIVADO</span>
+                    {% endif %}
+                </td>
+                <td>{{ mod.descripcion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

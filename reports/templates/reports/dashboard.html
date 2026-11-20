@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes PDF/CSV (Módulo Opcional) | {{ ACTIVE_VARIANT }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Módulo Opcional: Reportes y Exportación (<code>reports</code>)</h1>
+        <p>Funcionalidad aislada de la Sesión 2, controlada por la bandera <code>ENABLE_REPORTS = {{ ENABLE_REPORTS }}</code>.</p>
+    </div>
+    <div class="btn-group">
+        <a href="{% url 'reports:export_pdf' %}" class="btn btn-emerald">Descargar Reporte PDF (ReportLab)</a>
+        <a href="{% url 'reports:export_csv' %}" class="btn btn-primary">Descargar Reporte CSV</a>
+    </div>
+</div>
+
+<section class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-label">Proyectos Reportados</div>
+        <div class="metric-value">{{ projects|length }}</div>
+        <div class="metric-sub">Fuente: app núcleo <code>core</code></div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Presupuesto Consolidado</div>
+        <div class="metric-value">${{ total_budget|floatformat:2 }}</div>
+        <div class="metric-sub">Suma total de cartera</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Formatos Disponibles</div>
+        <div class="metric-value">PDF / CSV</div>
+        <div class="metric-sub">ReportLab + UTF-8 BOM</div>
+    </div>
+</section>
+
+<div class="layout-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Resumen Analítico por Categoría</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Cantidad</th>
+                    <th>Avance Promedio</th>
+                    <th>Presupuesto Acumulado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in by_category %}
+                <tr>
+                    <td><strong>{{ row.category }}</strong></td>
+                    <td>{{ row.total }}</td>
+                    <td>{{ row.avg_progress|floatformat:1 }}%</td>
+                    <td>${{ row.total_budget|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Distribución por Estado</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in by_status %}
+                <tr>
+                    <td><strong>{{ row.status }}</strong></td>
+                    <td>{{ row.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

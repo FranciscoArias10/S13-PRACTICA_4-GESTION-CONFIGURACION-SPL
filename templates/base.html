@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UNEMI — Sistema SPL Django{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <span class="brand-badge">UNEMI · SPL</span>
+                <div>
+                    <div class="brand-title">Gestor Académico de Proyectos</div>
+                    <div class="brand-subtitle">Gestión de la Configuración de Software · Práctica 4</div>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'core' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    Panel Núcleo
+                </a>
+                <a href="{% url 'accounts:directory' %}" class="nav-link {% if request.resolver_match.app_name == 'accounts' %}active{% endif %}">
+                    Usuarios (Reutilizable)
+                </a>
+                <a href="{% url 'file_manager:list' %}" class="nav-link {% if request.resolver_match.app_name == 'file_manager' %}active{% endif %}">
+                    Archivos (Reutilizable)
+                </a>
+
+                {% if ENABLE_REPORTS %}
+                <a href="{% url 'reports:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'reports' %}active{% endif %}">
+                    Reportes PDF/CSV
+                    <span class="nav-pill">ON</span>
+                </a>
+                {% endif %}
+
+                {% if ENABLE_NOTIFICATIONS %}
+                <a href="{% url 'notifications:center' %}" class="nav-link {% if request.resolver_match.app_name == 'notifications' %}active{% endif %}">
+                    Notificaciones
+                    {% if UNREAD_NOTIFICATIONS > 0 %}
+                    <span class="nav-pill">{{ UNREAD_NOTIFICATIONS }}</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+
+                <a href="{% url 'core:architecture' %}" class="nav-link {% if request.resolver_match.url_name == 'architecture' %}active{% endif %}">
+                    Arquitectura SPL
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="spl-status-bar">
+        <div class="spl-status-inner">
+            <div>
+                <strong>Configuración de Variante Activa:</strong>
+                {% if ACTIVE_VARIANT == 'PRODUCT_A' %}
+                    <span class="badge badge-variant-a">{{ ACTIVE_CONFIG.NAME }}</span>
+                {% else %}
+                    <span class="badge badge-variant-b">{{ ACTIVE_CONFIG.NAME }}</span>
+                {% endif %}
+            </div>
+            <div class="flag-group">
+                <span class="badge badge-reusable">accounts: ON</span>
+                <span class="badge badge-reusable">file_manager: ON</span>
+                <span class="badge {% if ENABLE_REPORTS %}badge-on{% else %}badge-off{% endif %}">
+                    ENABLE_REPORTS = {{ ENABLE_REPORTS }}
+                </span>
+                <span class="badge {% if ENABLE_NOTIFICATIONS %}badge-on{% else %}badge-off{% endif %}">
+                    ENABLE_NOTIFICATIONS = {{ ENABLE_NOTIFICATIONS }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        Universidad Estatal de Milagro (UNEMI) · Carrera de Ingeniería de Software · Línea de Productos de Software (SPL) en Django · {{ ACTIVE_VARIANT }}
+    </footer>
+</body>
+</html>
+

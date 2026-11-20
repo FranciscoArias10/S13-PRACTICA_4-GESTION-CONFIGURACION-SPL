@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Archivos (App Reutilizable) | UNEMI SPL{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Módulo Reutilizable: Carga de Archivos (<code>file_manager</code>)</h1>
+        <p>Componente desacoplado mediante etiquetas <code>reference_tag</code> para reutilizarse en cualquier sistema Django.</p>
+    </div>
+    <span class="badge badge-reusable">Core Asset Reutilizable</span>
+</div>
+
+<div class="layout-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Documentos y Artefactos Registrados ({{ attachments|length }})</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Etiqueta Ref.</th>
+                    <th>Categoría</th>
+                    <th>Autor</th>
+                    <th>Tamaño</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in attachments %}
+                <tr>
+                    <td>
+                        <strong>{{ item.title }}</strong>
+                        {% if item.file %}
+                            <br><a href="{{ item.file.url }}" target="_blank" style="font-size:12px;">Descargar adjunto</a>
+                        {% endif %}
+                    </td>
+                    <td><code>{{ item.reference_tag }}</code></td>
+                    <td><span class="badge badge-core">{{ item.get_category_display }}</span></td>
+                    <td>{{ item.uploaded_by }}</td>
+                    <td>{{ item.size_kb }} KB</td>
+                    <td>{{ item.uploaded_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No existen archivos cargados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Subir Documento Técnico</h2>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Título del Documento</label>
+                <input id="title" name="title" class="form-control" placeholder="Ej. Diagrama SPL v1.0" required>
+            </div>
+            <div class="form-group">
+                <label for="reference_tag">Etiqueta de Referencia</label>
+                <input id="reference_tag" name="reference_tag" class="form-control" value="SPL-2026-01">
+            </div>
+            <div class="form-group">
+                <label for="category">Categoría</label>
+                <select id="category" name="category" class="form-control">
+                    {% for key, label in category_choices %}
+                        <option value="{{ key }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="uploaded_by">Responsable</label>
+                <input id="uploaded_by" name="uploaded_by" class="form-control" value="Francisco Arias">
+            </div>
+            <div class="form-group">
+                <label for="file">Archivo (Opcional)</label>
+                <input id="file" name="file" type="file" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Guardar Archivo</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
