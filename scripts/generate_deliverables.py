@@ -818,7 +818,7 @@ def build_manual_pdf():
             ['Asignatura', 'Gestión de la Configuración de Software [GESCONSOF]'],
             ['Docente de la Asignatura', 'Ing. Lissett Margarita Arévalo Gamboa'],
             ['Docente de la Práctica', 'Ing. Omar Andrés Oviedo Armijos'],
-            ['Integrantes del Grupo', 'Oswaldo Danilo Angulo Tamayo\nEzequiel Cristobal Jaramillo Yepez\nFrancisco Steven Arias Pérez\nDarly Douglas Farías Mendoza'],
+            ['Integrantes del Grupo', 'Francisco Steven Arias Pérez\nDarly Douglas Farías Mendoza'],
             ['Proyecto Base', 'Sistema Académico Modular de Proyectos (Django 6.1)'],
             ['Variantes Implementadas', 'PRODUCT_A (Sistema Básico) | PRODUCT_B (Sistema Completo)'],
         ],

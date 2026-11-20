@@ -1,6 +1,6 @@
 # SESIÓN 4 – Documentación y línea de productos
 
-**Responsable sugerido:** Darly Douglas Farías Mendoza  
+**Responsable:** Darly Douglas Farías Mendoza  
 
 ## 1. Preguntas de Análisis de la Línea de Productos
 - **¿Qué tienen en común todas las variantes?** El núcleo `core/`, las apps reutilizables `accounts/` y `file_manager/`, la base de datos SQLite y la estructura visual base.

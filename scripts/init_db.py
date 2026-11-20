@@ -29,12 +29,13 @@ def seed_database():
     call_command('makemigrations', 'accounts', 'file_manager', 'core', 'notifications', verbosity=1)
     call_command('migrate', verbosity=1)
 
+    print('>> Limpiando registros semilla previos...')
+    User.objects.filter(username__in=['oangulo', 'ejaramillo']).delete()
+
     print('>> Sembrando usuarios institucionales en app reutilizable [accounts]...')
     users_data = [
-        ('oangulo', 'Oswaldo Danilo', 'Angulo Tamayo', 'oangulo@unemi.edu.ec', 'ESTUDIANTE', 'UNEMI-2026-01'),
-        ('ejaramillo', 'Ezequiel Cristobal', 'Jaramillo Yepez', 'ejaramillo@unemi.edu.ec', 'ESTUDIANTE', 'UNEMI-2026-02'),
-        ('farias', 'Francisco Steven', 'Arias Pérez', 'fariasp2@unemi.edu.ec', 'ADMIN', 'UNEMI-2026-03'),
-        ('dfarias', 'Darly Douglas', 'Farías Mendoza', 'dfarias@unemi.edu.ec', 'ESTUDIANTE', 'UNEMI-2026-04'),
+        ('farias', 'Francisco Steven', 'Arias Pérez', 'fariasp2@unemi.edu.ec', 'ADMIN', 'UNEMI-2026-01'),
+        ('dfarias', 'Darly Douglas', 'Farías Mendoza', 'dfarias@unemi.edu.ec', 'ESTUDIANTE', 'UNEMI-2026-02'),
         ('ooviedoa', 'Omar Andrés', 'Oviedo Armijos', 'ooviedoa@unemi.edu.ec', 'DOCENTE', 'UNEMI-DOC-01'),
     ]
     for username, first, last, email, role, inst_id in users_data:
@@ -45,7 +46,7 @@ def seed_database():
         if created:
             user.set_password('Unemi2026*')
             user.save()
-        UserProfile.objects.get_or_create(
+        UserProfile.objects.update_or_create(
             user=user,
             defaults={
                 'role': role,
@@ -57,14 +58,14 @@ def seed_database():
     print('>> Sembrando proyectos académicos en núcleo [core]...')
     projects_data = [
         ('SPL-2026-01', 'Plataforma Modular de Gestión Académica', 'SPL', 'Francisco Steven Arias Pérez', 'COMPLETADO', 100, 2400.00, date(2026, 11, 18), 'Núcleo base con arquitectura de apps reutilizables.'),
-        ('SPL-2026-02', 'Módulo Exportador de Reportes Ejecutivos PDF', 'WEB', 'Oswaldo Danilo Angulo Tamayo', 'COMPLETADO', 100, 1350.00, date(2026, 11, 20), 'App aislada controlada mediante bandera ENABLE_REPORTS.'),
-        ('SPL-2026-03', 'Centro de Notificaciones y Alertas en Tiempo Real', 'SPL', 'Ezequiel Cristobal Jaramillo Yepez', 'EN_CURSO', 85, 1600.00, date(2026, 11, 25), 'Componente opcional activado en Variante B.'),
+        ('SPL-2026-02', 'Módulo Exportador de Reportes Ejecutivos PDF', 'WEB', 'Darly Douglas Farías Mendoza', 'COMPLETADO', 100, 1350.00, date(2026, 11, 20), 'App aislada controlada mediante bandera ENABLE_REPORTS.'),
+        ('SPL-2026-03', 'Centro de Notificaciones y Alertas en Tiempo Real', 'SPL', 'Francisco Steven Arias Pérez', 'EN_CURSO', 85, 1600.00, date(2026, 11, 25), 'Componente opcional activado en Variante B.'),
         ('SPL-2026-04', 'Gestor Documental Portátil entre Proyectos Django', 'WEB', 'Darly Douglas Farías Mendoza', 'REVISION', 90, 1100.00, date(2026, 11, 28), 'Componente reutilizable file_manager desacoplado.'),
         ('SPL-2026-05', 'Tablero Analítico de Variabilidad y Métricas RiSE', 'DATOS', 'Francisco Steven Arias Pérez', 'EN_CURSO', 70, 1850.00, date(2026, 12, 4), 'Seguimiento de adopción de reutilización según modelo RiSE.'),
-        ('SPL-2026-06', 'Cliente Móvil Institucional UNEMI-SPL', 'MOVIL', 'Oswaldo Danilo Angulo Tamayo', 'PLANIFICADO', 35, 2900.00, date(2026, 12, 18), 'Extensión multicanal conectada al núcleo core.'),
+        ('SPL-2026-06', 'Cliente Móvil Institucional UNEMI-SPL', 'MOVIL', 'Darly Douglas Farías Mendoza', 'PLANIFICADO', 35, 2900.00, date(2026, 12, 18), 'Extensión multicanal conectada al núcleo core.'),
     ]
     for code, title, cat, leader, status, prog, budget, ddate, desc in projects_data:
-        AcademicProject.objects.get_or_create(
+        AcademicProject.objects.update_or_create(
             code=code,
             defaults={
                 'title': title,
@@ -80,13 +81,13 @@ def seed_database():
 
     print('>> Sembrando documentos técnicos en app reutilizable [file_manager]...')
     files_data = [
-        ('Hoja de Análisis de Funcionalidades — Sesión 1', 'SESION-01', 'SPEC', 'Francisco Arias', 184),
-        ('Diagrama de Arquitectura Funcional SPL', 'SESION-01', 'DIAGRAM', 'Oswaldo Angulo', 420),
-        ('Especificación de Banderas en settings.py y urls.py', 'SESION-02', 'SPEC', 'Ezequiel Jaramillo', 142),
-        ('Matriz de Variantes PRODUCT_A vs PRODUCT_B', 'SESION-03', 'REPORT', 'Darly Farías', 216),
+        ('Hoja de Análisis de Funcionalidades — Sesión 1', 'SESION-01', 'SPEC', 'Francisco Steven Arias Pérez', 184),
+        ('Diagrama de Arquitectura Funcional SPL', 'SESION-01', 'DIAGRAM', 'Francisco Steven Arias Pérez', 420),
+        ('Especificación de Banderas en settings.py y urls.py', 'SESION-02', 'SPEC', 'Darly Douglas Farías Mendoza', 142),
+        ('Matriz de Variantes PRODUCT_A vs PRODUCT_B', 'SESION-03', 'REPORT', 'Darly Douglas Farías Mendoza', 216),
     ]
     for title, tag, cat, author, size in files_data:
-        Attachment.objects.get_or_create(
+        Attachment.objects.update_or_create(
             title=title,
             defaults={
                 'reference_tag': tag,

@@ -1,6 +1,6 @@
 # SESIÓN 1 – Identificación de componentes reutilizables
 
-**Responsable sugerido:** Oswaldo Danilo Angulo Tamayo  
+**Responsable:** Francisco Steven Arias Pérez  
 
 ## 1. Proyecto Django Seleccionado
 - **Nombre:** Sistema Académico Modular de Proyectos (`spl_project`)

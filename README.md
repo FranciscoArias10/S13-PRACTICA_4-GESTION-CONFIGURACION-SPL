@@ -6,8 +6,6 @@
 **Docente de Práctica:** Ing. Omar Andrés Oviedo Armijos  
 
 ## Integrantes del Grupo
-- Oswaldo Danilo Angulo Tamayo
-- Ezequiel Cristobal Jaramillo Yepez
 - Francisco Steven Arias Pérez
 - Darly Douglas Farías Mendoza
 

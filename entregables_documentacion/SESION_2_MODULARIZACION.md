@@ -1,6 +1,6 @@
 # SESIÓN 2 – Modularización y separación de variantes
 
-**Responsable sugerido:** Ezequiel Cristobal Jaramillo Yepez  
+**Responsable:** Darly Douglas Farías Mendoza  
 
 ## 1. Acciones Ejecutadas
 1. Se aisló la funcionalidad opcional de exportación de reportes en una aplicación Django independiente llamada `reports/` (`apps.py`, `views.py`, `urls.py`, `templates/reports/dashboard.html`).

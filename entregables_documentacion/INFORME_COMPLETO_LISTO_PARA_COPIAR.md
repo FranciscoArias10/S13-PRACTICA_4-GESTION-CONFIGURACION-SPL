@@ -16,7 +16,7 @@
 | **Guía de Práctica** | `G004-S13-SOFTWARE2019-PRESENCIAL-GESTIÓN DE LA CONFIGURACIÓN DE SOFTWARE-B1` — Práctica N° 4 |
 | **Docente de la Asignatura** | Ing. Arévalo Gamboa Lissett Margarita |
 | **Docente de la Práctica** | Ing. Oviedo Armijos Omar Andrés |
-| **Integrantes del Grupo** | 1. Oswaldo Danilo Angulo Tamayo<br>2. Ezequiel Cristobal Jaramillo Yepez<br>3. Francisco Steven Arias Pérez<br>4. Darly Douglas Farías Mendoza |
+| **Integrantes del Grupo** | 1. Francisco Steven Arias Pérez<br>2. Darly Douglas Farías Mendoza |
 | **Fecha** | Noviembre de 2026 |
 
 ---
@@ -27,7 +27,7 @@ Analizar, modularizar y extender un sistema web en Django aplicando principios d
 
 ---
 
-## SESIÓN 1 – Identificación de componentes reutilizables (`Oswaldo Danilo Angulo Tamayo`)
+## SESIÓN 1 – Identificación de componentes reutilizables (`Francisco Steven Arias Pérez`)
 
 ### 1.1 Selección del Proyecto Django
 Se trabajó con el proyecto **Sistema Académico Modular de Proyectos (`spl_project`)** desarrollado en **Django 6.1.3** con Python 3.13 y base de datos SQLite, estructurado en aplicaciones independientes para facilitar el análisis de reutilización y variabilidad conforme al modelo de referencia **RiSE (Reuse in Software Engineering)**.
@@ -77,7 +77,7 @@ flowchart TB
 
 ---
 
-## SESIÓN 2 – Modularización y separación de variantes (`Ezequiel Cristobal Jaramillo Yepez`)
+## SESIÓN 2 – Modularización y separación de variantes (`Darly Douglas Farías Mendoza`)
 
 ### 2.1 Aislamiento de la Funcionalidad Opcional (`reports`)
 Para evitar que la exportación de reportes quedara acoplada al núcleo `core`, se extrajo toda la lógica de resumen analítico y generación de PDF/CSV hacia la aplicación Django independiente `reports/`, conformada por:
@@ -270,21 +270,13 @@ Las pruebas unitarias (`manage.py test`) y la suite de verificación por proceso
 
 ## CONCLUSIONES Y RECOMENDACIONES POR CADA ESTUDIANTE
 
-### 1. Oswaldo Danilo Angulo Tamayo
-- **Conclusión:** El análisis inicial de funcionalidades y la clasificación temprana entre componentes reutilizables (`accounts`, `file_manager`), núcleo específico (`core`) y módulos opcionales permitió estructurar el proyecto Django bajo los principios del modelo RiSE, reduciendo el acoplamiento y garantizando que los activos comunes puedan aprovecharse en futuros sistemas web académicos.
-- **Recomendación:** Realizar siempre una matriz de trazabilidad y análisis de dependencias antes de escribir código, evitando referencias directas entre apps reutilizables y modelos específicos del dominio para preservar la portabilidad entre proyectos.
+### 1. Francisco Steven Arias Pérez
+- **Conclusión:** La identificación de activos reutilizables (`accounts` y `file_manager`) junto con la centralización de perfiles de producto en `config_product.py` (`PRODUCT_A` y `PRODUCT_B`) y el ruteo mediante `include()` condicional en `spl_project/urls.py` permitió derivar dos variantes funcionalmente distintas desde una única base de código fuente, aplicando los principios de reutilización del modelo RiSE sin duplicar repositorios ni ramas.
+- **Recomendación:** Realizar siempre una matriz de trazabilidad previa entre módulos reutilizables y específicos, y automatizar la verificación de cada variante en la línea de productos (tal como `scripts/verify_spl.py`) para comprobar que la desactivación de características opcionales no genere errores `NoReverseMatch` ni deje rutas expuestas.
 
-### 2. Ezequiel Cristobal Jaramillo Yepez
-- **Conclusión:** El aislamiento de la generación de reportes PDF/CSV en la aplicación independiente `reports/` demostró que es posible modularizar características opcionales sin alterar la estabilidad del sistema base; el uso de la bandera `ENABLE_REPORTS` en `settings.py`, vistas y plantillas permite habilitar o retirar la funcionalidad de forma limpia y reversible.
-- **Recomendación:** Mantener cada característica opcional encapsulada con sus propias vistas, plantillas y rutas con espacio de nombres (`app_name`), validando además en el controlador que la bandera esté activa para evitar accesos no previstos si alguien intenta invocar la ruta directamente.
-
-### 3. Francisco Steven Arias Pérez
-- **Conclusión:** La centralización de perfiles en `config_product.py` (`PRODUCT_A` y `PRODUCT_B`) combinada con el uso de `include()` condicional en `spl_project/urls.py` permitió derivar dos productos funcionalmente distintos a partir de una única base de código fuente, eliminando la necesidad de mantener copias o ramas separadas por cliente.
-- **Recomendación:** Automatizar la verificación de cada variante en el flujo de integración continua (como en `scripts/verify_spl.py`) para comprobar que la desactivación de una característica en `PRODUCT_A` no genere errores `NoReverseMatch` en plantillas ni deje endpoints expuestos.
-
-### 4. Darly Douglas Farías Mendoza
-- **Conclusión:** La documentación integral de la línea de productos —incluyendo el modelo de características FODA, el árbol de decisiones, la tabla de variantes y el manual técnico en PDF— resulta indispensable en la Gestión de la Configuración de Software, pues convierte un conjunto de banderas técnicas en un catálogo comprensible y replicable para todo el equipo de desarrollo.
-- **Recomendación:** Mantener sincronizados el archivo `config_product.py`, el diagrama de características SPL y el manual de configuración cada vez que se agregue una nueva variante o módulo opcional, y considerar el empaquetado de las apps transversales (`accounts` y `file_manager`) como librerías instalables vía `pip`.
+### 2. Darly Douglas Farías Mendoza
+- **Conclusión:** La modularización de funcionalidades opcionales como `reports/` y `notifications/` mediante banderas en `settings.py` y su posterior documentación formal —incluyendo el modelo de características FODA, el árbol de decisiones, la tabla de variantes y el manual técnico en PDF— demostró que es posible activar o retirar capacidades de forma limpia y mantener una línea de productos comprensible y replicable en la Gestión de la Configuración de Software.
+- **Recomendación:** Mantener encapsulada cada app opcional con sus propias vistas, plantillas y espacios de nombres (`app_name`), sincronizar `config_product.py` con el manual técnico ante cada nueva variante y evaluar el empaquetado de las apps transversales (`accounts` y `file_manager`) para su instalación directa vía `pip` en otros proyectos Django.
 
 ---
 

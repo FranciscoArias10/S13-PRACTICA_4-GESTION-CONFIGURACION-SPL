@@ -1,6 +1,6 @@
 # SESIÓN 3 – Configuración de variabilidad
 
-**Responsable sugerido:** Francisco Steven Arias Pérez  
+**Responsable:** Francisco Steven Arias Pérez  
 
 ## 1. Simulación de Variantes en `config_product.py`
 - **Variante A (`PRODUCT_A`):** Sistema básico (`ENABLE_REPORTS: False`, `ENABLE_NOTIFICATIONS: False`).
